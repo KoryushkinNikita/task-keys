@@ -6,7 +6,7 @@ export function Keys(props: { initialData: IItem[]; sorting: 'ASC' | 'DESC' }) {
   const [sort, setSorting] = useState(props.sorting);
   const [id, setId] = useState(-1);
   const [isEdit, setThatEdit] = useState(false);
-  const [newValue, setNewValue] = useState();
+  const [newValue, setNewValue] = useState('');
 
   useEffect(()=>{
       switch (props.sorting) {
@@ -25,7 +25,7 @@ export function Keys(props: { initialData: IItem[]; sorting: 'ASC' | 'DESC' }) {
     <div>
       {
         items.map((item) => {
-          if (item.id != id)
+          if (!isEdit || item.id != id)
             return (
               <div
                 onClick={(e) => {
@@ -39,23 +39,24 @@ export function Keys(props: { initialData: IItem[]; sorting: 'ASC' | 'DESC' }) {
           <input
             type="text"
             defaultValue={item.name}
-            onKeyPress={
+            onChange={
+              (e) => {
+                setNewValue(e.target.value);
+              }
+            }
+            onKeyDown={
               (e) => {
                 if (e.key == 'Enter') {
                     items.map((changedItem) => {
                       if (item.id == changedItem.id) changedItem.name = newValue;
-                    })
+                    });
                     setThatEdit(false);
                     setItems(items);
                   }
                 if (e.key == 'Escape') setThatEdit(false);
               }
             }
-            onChange={
-              (e) => {
-                setNewValue(e.target.value);
-              }
-            }>
+            key={item.id}>
             </input>
           );
         }
